@@ -55,7 +55,8 @@ for (i = 1; i <= 6; i++)
 }
 }
 
-space() "intersection of red and red";
+space();
+"intersection of red and red";
 for (i = 1; i <= 6; i++)
 {
     for (j = 1; j <= 6; j++)
