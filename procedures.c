@@ -95,7 +95,7 @@ proc DerivativeEquationList(list @eq, poly @f)
     return (@eq);
 }
 
-// for first three elements of list
+// fix or trash
 proc ComplexMult(list @P(1), list @P(2))
 {
     if (@P(1) * @P(2) == 0)

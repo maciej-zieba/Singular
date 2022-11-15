@@ -53,7 +53,6 @@ for (i = 1; i <= 6; i++)
         dim(std(ideal(red(i)[1..2], blue(j)[1..2])));
     }
 }
-}
 
 space();
 "intersection of red and red";
