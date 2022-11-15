@@ -112,6 +112,20 @@ proc ComplexMult(list @P(1), list @P(2))
 
 proc TwistedCubic(list @P)
 {
-    list P = @P[1] ^ 3, @P[1] ^ 2 * @P[2], @P[1] * @P[2] ^ 2, @P[2] ^ 3;
+    list P = poly(@P[1] ^ 3), poly(@P[1] ^ 2 * @P[2]), poly(@P[1] * @P[2] ^ 2), poly(@P[2] ^ 3);
     return (P);
+}
+
+proc VarietyEquality(ideal @I, ideal @J)
+{
+    @I = radical(@I);
+    @J = radical(@J);
+    if ((reduce(@I, @J) == 0) * (reduce(@J, @I) == 0))
+    {
+        return (1);
+    }
+    else
+    {
+        return (0);
+    }
 }
