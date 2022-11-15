@@ -109,3 +109,9 @@ proc ComplexMult(list @P(1), list @P(2))
 
     return (P);
 }
+
+proc TwistedCubic(list @P)
+{
+    list P = @P[1] ^ 3, @P[1] ^ 2 * @P[2], @P[1] * @P[2] ^ 2, @P[2] ^ 3;
+    return (P);
+}
