@@ -84,13 +84,28 @@ proc PointToEquationList(list @P, list @eq)
     return (@eq);
 }
 
-proc DerivativeEquationList(list @eq, poly f)
+proc DerivativeEquationList(list @eq, poly @f)
 {
     int i;
     for (i = 1; i <= size(@eq); i++)
     {
-        @eq[i] = diff(@eq[i], f);
+        @eq[i] = diff(@eq[i], @f);
     }
 
     return (@eq);
+}
+
+// for first three elements of list
+proc ComplexMult(list @P(1), list @P(2))
+{
+    if (@P(1) * @P(2) == 0)
+    {
+        return ("error");
+    }
+
+    list P = @P(1)[1] * @P(2)[1] - @P(1)[2] * @P(2)[2],
+         @P(1)[1] * @P(2)[2] + @P(1)[2] * @P(2)[1],
+         @P(1)[3] * @P(2)[3];
+
+    return (P);
 }
