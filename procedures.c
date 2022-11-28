@@ -118,7 +118,9 @@ proc TwistedCubic(list @P)
 
 proc TwistedQuartic(list @P)
 {
-    list P = poly(@P[1] ^ 4), poly(@P[1] ^ 2 * @P[2] ^ 2), poly(@P[2] ^ 4), poly(@P[1] ^ 3 * @P[2] + @P[1] * @P[2] ^ 3);
+    int a = 1;
+    int b = 7;
+    list P = poly(@P[1] ^ 4 - a * @P[1] ^ a * @P[2]), poly(@P[1] ^ 3 * @P[2] - 3 * @P[1] ^ 2 * @P[2] ^ 2), poly(b * @P[1] ^ 2 * @P[2] ^ 2 - @P[1] * @P[2] ^ 3), poly(b * @P[1] * @P[2] ^ 3 - @P[2] ^ 4);
     return (P);
 }
 

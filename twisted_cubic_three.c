@@ -1,9 +1,11 @@
 /*
 Twisted quartic
 */
-
+option(redSB);
 option(noredefine);
 option(noloadLib);
+option(prot);
+LIB "primdec";
 LIB "elim.lib";
 int n, counter, IsWeddle;
 
@@ -72,7 +74,7 @@ poly TenPointWeddle = det(TenPointsInterpolation);
 space();
 
 deg(TenPointWeddle);
-
+int counter;
 ideal Intersection = 0;
 for (i = 1; i <= 10; i++)
 {
@@ -83,6 +85,8 @@ for (i = 1; i <= 10; i++)
         {
             for (l = k; l <= 4; l++)
             {
+                counter++;
+                // print(string(i) + " " + string(j) + string(k) + string(l));
                 T(i) = T(i) + subst(diff(diff(diff(TenPointWeddle, x(j)), x(k)), x(l)), x(1), P(i)[1], x(2), P(i)[2], x(3), P(i)[3], x(4), P(i)[4]) * x(j) * x(k) * x(l);
             }
         }
@@ -96,3 +100,23 @@ print("dim = " + string(dim(Intersection)));
 print("mult = " + string(mult(Intersection)));
 print("degs = ");
 deg(T(1..10));
+
+counter;
+
+size(T(1..10));
+
+space();
+reduce(T(1), PointIdeal(P(1)) ^ 1);
+reduce(T(1), PointIdeal(P(1)) ^ 2);
+reduce(T(1), PointIdeal(P(1)) ^ 3);
+reduce(T(1), PointIdeal(P(1)) ^ 4);
+
+ideal weddlejacobian = jacob(TenPointWeddle);
+
+weddlejacobian = std(weddlejacobian);
+weddlejacobian = radical(weddlejacobian);
+weddlejacobian = std(weddlejacobian);
+
+space();
+dim(weddlejacobian);
+mult(weddlejacobian);

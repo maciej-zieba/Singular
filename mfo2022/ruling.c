@@ -4,7 +4,29 @@ option(noloadLib);
 
 LIB "primitiv.lib";
 
-for (int n = 2; n <= 15; n++)
+proc space()
+{
+    print("");
+    print("----------------------------------------------------------------");
+    print("");
+}
+
+proc LineIdeal(list @P(1), list @P(2))
+{
+    ideal I = intersect(PointIdeal(@P(1)), PointIdeal(@P(2)));
+    return (std(I))
+}
+
+proc PointIdeal(list @P)
+{
+    matrix M[2][4] = @P[1], @P[2], @P[3], @P[4],
+           x(1), x(2), x(3), x(4);
+    ideal I = wedge(M, 2);
+
+    return (I)
+}
+
+for (int n = 3; n <= 15; n++)
 {
     ring r(1) = (0), (a, b), dp;
 
@@ -16,7 +38,7 @@ for (int n = 2; n <= 15; n++)
 
     ring r(2) = (0, b), (x(1..4)), dp;
     execute(s);
-    < "procedures.c";
+
     int i, j, k;
 
     ideal JJ = imap(r(1), J);

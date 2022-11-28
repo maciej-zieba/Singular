@@ -1,5 +1,5 @@
-poly cc(2) = a;
-poly ss(2) = b - 1;
+poly cc(2) = a -1;
+poly ss(2) = b;
 poly cc(3) = 2 * a + 1;
 poly ss(3) = 4 * b ^ 2 - 3;
 poly cc(4) = a;
