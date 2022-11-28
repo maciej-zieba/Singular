@@ -3,7 +3,7 @@ option(noloadLib);
 LIB "elim.lib";
 int n, counter, IsWeddle;
 
-for (n = 1; n <= 10000; n++)
+for (n = 1; n <= 1000; n++)
 {
     ring r = (0), (x(1..4)), dp;
 
@@ -18,13 +18,19 @@ for (n = 1; n <= 10000; n++)
     system("random", n);
     for (i = 4; i <= 7; i++)
     {
-        list P(i) = random(-100, 100), random(-100, 100);
+        list P(i) = random(-1000, 1000), random(-1000, 1000);
         // print(P(i));
     }
 
+    ideal Intersection = 1;
     for (i = 1; i <= 7; i++)
     {
         P(i) = TwistedCubic(P(i));
+        Intersection = intersect(Intersection, PointIdeal(P(i)));
+    }
+    if (mult(std(Intersection)) < 7)
+    {
+        print(mult(std(Intersection)));
     }
 
     ideal TwistedCubicIdeal = x(1) * x(3) - x(2) ^ 2,
@@ -62,18 +68,34 @@ for (n = 1; n <= 10000; n++)
     ideal SevenPointsInterpolationIdeal = wedge(SevenPointsInterpolation, 10);
 
     ideal OutputIdeal = sat(SevenPointsInterpolationIdeal, TwistedCubicIdeal)[1];
+    poly OutputIdealSatCounter = sat(SevenPointsInterpolationIdeal, TwistedCubicIdeal)[2];
 
     if (deg(OutputIdeal) == 4)
     {
         counter++;
+
         "";
-        print(OutputIdeal);
+        // print(OutputIdeal);
         if (VarietyEquality(OutputIdeal, SixPointsWeddle) == 1)
         {
             IsWeddle++;
         };
     }
+    if (deg(OutputIdeal) > 0)
+    {
+        OutputIdeal;
+    }
+    else
+    {
+        // OutputIdealSatCounter;
+    }
+    // if (mult(std(Intersection)) < 7)
+    // {
+    //     // print(VarietyEquality(Intersection, OutputIdeal));
+    //     mult(OutputIdeal);
+    // }
 }
+
 space();
 print(string(counter) + "/" + string(n - 1) + " passed.");
 print(string(IsWeddle) + "/" + string(counter) + " is Weddle.");

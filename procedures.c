@@ -96,19 +96,19 @@ proc DerivativeEquationList(list @eq, poly @f)
 }
 
 // fix or trash
-proc ComplexMult(list @P(1), list @P(2))
-{
-    if (@P(1) * @P(2) == 0)
-    {
-        return ("error");
-    }
+// proc ComplexMult(list @P(1), list @P(2))
+// {
+//     if (@P(1) * @P(2) == 0)
+//     {
+//         exit;
+//     }
 
-    list P = @P(1)[1] * @P(2)[1] - @P(1)[2] * @P(2)[2],
-         @P(1)[1] * @P(2)[2] + @P(1)[2] * @P(2)[1],
-         @P(1)[3] * @P(2)[3];
+//     list P = @P(1)[1] * @P(2)[1] - @P(1)[2] * @P(2)[2],
+//          @P(1)[1] * @P(2)[2] + @P(1)[2] * @P(2)[1],
+//          @P(1)[3] * @P(2)[3];
 
-    return (P);
-}
+//     return (P);
+// }
 
 proc TwistedCubic(list @P)
 {
@@ -116,10 +116,16 @@ proc TwistedCubic(list @P)
     return (P);
 }
 
+proc TwistedQuartic(list @P)
+{
+    list P = poly(@P[1] ^ 4), poly(@P[1] ^ 2 * @P[2] ^ 2), poly(@P[2] ^ 4), poly(@P[1] ^ 3 * @P[2] + @P[1] * @P[2] ^ 3);
+    return (P);
+}
+
 proc VarietyEquality(ideal @I, ideal @J)
 {
-    @I = radical(@I);
-    @J = radical(@J);
+    @I = std(radical(std(@I)));
+    @J = std(radical(std(@J)));
     if ((reduce(@I, @J) == 0) * (reduce(@J, @I) == 0))
     {
         return (1);
@@ -128,4 +134,19 @@ proc VarietyEquality(ideal @I, ideal @J)
     {
         return (0);
     }
+}
+
+proc PointFromIdeal(ideal @I)
+{
+    list point;
+    @I = std(I);
+    if (size(@I) < 3 + size(@I) > 3)
+    {
+        exit;
+    }
+    if (size(coef(@I[1], x(1))) == 4)
+    {
+        point[1]
+    }
+    if ((size(coef(@I[1], x(2))) == 4))
 }

@@ -1,77 +1,100 @@
-ring r = (0, u), (x(1..4)), dp;
-minpoly = u2 - 3;
+option(noredefine);
+option(noloadLib);
+// option(prot);
 
-< "procedures.c";
+LIB "primitiv.lib";
 
-int i, j;
-
-list P(1..6);
-list Q(1..6);
-
-P(1) = 1, 0, 0, 1;
-Q(1) = 1, 0, 1, 1;
-P(2) = 1, u, 0, 2;
-Q(2) = 1, u, 2, 2;
-P(3) = -1, u, 0, 2;
-Q(3) = -1, u, 2, 2;
-P(4) = -1, 0, 0, 1;
-Q(4) = -1, 0, 1, 1;
-P(5) = -1, -u, 0, 2;
-Q(5) = -1, -u, 2, 2;
-P(6) = 1, -u, 0, 2;
-Q(6) = 1, -u, 2, 2;
-
-ideal red(1..6);
-ideal blue(1..6);
-
-red(1) = LineIdeal(P(1), Q(3));
-red(2) = LineIdeal(P(2), Q(4));
-red(3) = LineIdeal(P(3), Q(5));
-red(4) = LineIdeal(P(4), Q(6));
-red(5) = LineIdeal(P(5), Q(1));
-red(6) = LineIdeal(P(6), Q(2));
-
-blue(1) = LineIdeal(P(1), Q(5));
-blue(2) = LineIdeal(P(2), Q(6));
-blue(3) = LineIdeal(P(3), Q(1));
-blue(4) = LineIdeal(P(4), Q(2));
-blue(5) = LineIdeal(P(5), Q(3));
-blue(6) = LineIdeal(P(6), Q(4));
-
-for (i = 1; i <= 6; i++)
+for (int n = 2; n <= 15; n++)
 {
-    red(i) = red(i)[1..2];
-    blue(i) = blue(i)[1..2];
-}
+    ring r(1) = (0), (a, b), dp;
 
-space();
-"intersection of red and blue";
-for (i = 1; i <= 6; i++)
-{
-    for (j = 1; j <= 6; j++)
+    < "minimal_polynomials.c";
+
+    ideal I = cc(n), ss(n), a ^ 2 + b ^ 2 - 1;
+    ideal J = primitive(I);
+    string s = "minpoly = " + string(J[1]) + ";";
+
+    ring r(2) = (0, b), (x(1..4)), dp;
+    execute(s);
+    < "procedures.c";
+    int i, j, k;
+
+    ideal JJ = imap(r(1), J);
+
+    poly cos = JJ[2];
+    poly sin = JJ[3];
+
+    n--;
+
+    list P(0..n);
+    list Q(0..n);
+
+    P(0) = 1, 0, 0, 1;
+    Q(0) = 1, 0, 1, 1;
+
+    for (i = 1; i <= n; i++)
     {
-        dim(std(ideal(red(i)[1..2], blue(j)[1..2])));
+        P(i) = P(i - 1)[1] * cos - P(i - 1)[2] * sin, P(i - 1)[1] * sin + P(i - 1)[2] * cos, 0, 1;
+        Q(i) = P(i);
+        Q(i)
+        [3] = 1;
     }
-}
 
-space();
-"intersection of red and red";
-for (i = 1; i <= 6; i++)
-{
-    for (j = 1; j <= 6; j++)
+    ideal red(0..n);
+    ideal blue(0..n);
+
+    int twist = 1;
+
+    for (i = 0; i <= n; i++)
     {
-        if (i == j)
+        red(i) = LineIdeal(P(i % (n + 1)), Q((i + twist) % (n + 1)));
+        blue(i) = LineIdeal(Q((i + twist) % (n + 1)), P((i + 2 * twist) % (n + 1)));
+    }
+    k = 0;
+    space();
+    // "intersection of red and blue";
+    for (i = 0; i <= n; i++)
+    {
+        for (j = 0; j <= n; j++)
         {
-            "i==j";
-            dim(std(ideal(red(i)[1..2], red(j)[1..2])));
-        }
-        else
-        {
-            "i<>j";
-            dim(std(ideal(red(i)[1..2], red(j)[1..2])));
+            if (dim(std(ideal(red(i)[1..2], blue(j)[1..2]))) == 1)
+            {
+                k++;
+            }
         }
     }
+    print(string(k) + " ? " + string((n + 1) ^ 2));
+    // "intersection of red and red (analogously for blue)";
+    for (i = 0; i <= n; i++)
+    {
+        for (j = 0; j <= n; j++)
+        {
+            if (i == j)
+            {
+                // "i==j"; // 2
+                if (dim(std(ideal(red(i)[1..2], red(j)[1..2]))) < 2)
+                {
+                    print("Error");
+                };
+                if (dim(std(ideal(blue(i)[1..2], blue(j)[1..2]))) < 2)
+                {
+                    print("Error");
+                };
+            }
+            else
+            {
+                // "i<>j"; // 0
+                if (dim(std(ideal(red(i)[1..2], red(j)[1..2]))) > 0)
+                {
+                    print("Error");
+                };
+                if (dim(std(ideal(blue(i)[1..2], blue(j)[1..2]))) > 0)
+                {
+                    print("Error");
+                };
+            }
+        }
+    }
+    n++;
+    print(n);
 }
-
-space();
-"analogously for blue";

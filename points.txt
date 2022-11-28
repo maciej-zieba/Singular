@@ -1,0 +1,125 @@
+// The purpose of this script is to configuration of points determined by the H4 root system
+
+proc rdideal(number p, number q, number r, number s) {
+	matrix m[2][4]=p,q,r,s,x,y,z,w;
+	ideal I=minor(m,2);
+	I=std(I);
+	return(I);
+}
+LIB "sing.lib";
+
+ring R2=(32003,u),(p,q,r,x,y,z,w),dp;
+//minpoly=u2+1;
+//minpoly=u2-u+1;
+//minpoly=u4+1; // minpoly for m=7
+minpoly=u2-u-1;
+
+int i,j,k;
+int m=7; 
+
+list L=
+1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1, 1,1,1,1, 1,1,1,-1,
+1,1,-1,1, 1,1,-1,-1, 1,-1,1,1, 1,-1,1,-1, 1,-1,-1,1, 1,-1,-1,-1,
+0,u,u^2,1, 0,u,u^2,-1, 0,u,-u^2,1, 0,u,-u^2,-1, 0,u^2,1,u, 0,u^2,1,-u,
+0,u^2,-1,u, 0,u^2,-1,-u, 0,1,u,u^2, 0,1,u,-u^2, 0,1,-u,u^2, 0,1,-u,-u^2,
+u,0,1,u^2, u,0,1,-u^2, u,0,-1,u^2, u,0,-1,-u^2, u^2,0,u,1, u^2,0,u,-1,
+u^2,0,-u,1, u^2,0,-u,-1, 1,0,u^2,u, 1,0,u^2,-u, 1,0,-u^2,u, 1,0,-u^2,-u,
+u,u^2,0,1, u,u^2,0,-1, u,-u^2,0,1, u,-u^2,0,-1, u^2,1,0,u, u^2,1,0,-u,
+u^2,-1,0,u, u^2,-1,0,-u, 1,u,0,u^2, 1,u,0,-u^2, 1,-u,0,u^2, 1,-u,0,-u^2,
+u,1,u^2,0, u,1,-u^2,0, u,-1,u^2,0, u,-1,-u^2,0, u^2,u,1,0, u^2,u,-1,0,
+u^2,-u,1,0, u^2,-u,-1,0, 1,u^2,u,0, 1,u^2,-u,0, 1,-u^2,u,0, 1,-u^2,-u,0;
+
+int j;
+for(j=1;j<=60;j++){
+   ideal P(j)=rdideal(L[4*j-3],L[4*j-2],L[4*j-1],L[4*j]);
+}
+
+ideal T=1;
+ideal U;
+for (i=1;i<=60;i++){
+   U=rdideal(L[4*i-3],L[4*i-2],L[4*i-1],L[4*i]);
+   T=intersect(T,U);
+}
+T=std(T);
+mult(T);
+deg(T[1..size(T)]);
+
+// this procedure checks how many lines are there containing k points
+
+int ii,j,k,l,m,mm;
+ideal U,V,W;
+list u,v,w;
+
+l=0;
+for (ii=1;ii<=59;ii++){
+  for (j=ii+1;j<=60;j++){
+    U=intersect(P(ii),P(j));
+	U=std(U);
+	V=U[1],U[2],T;
+	k=mult(std(V));
+	V=U[1],U[2];
+	if (k==5) {l=l+1; mm=0; for (m=1;m<=60;m++){if (std(reduce(V,P(m)))==0) {mm=mm+1; u=u+list(m);}}}
+  }
+}
+l;
+size(u);
+
+// this procedure removes repeating lines from their list
+int kk=5; //number of points on a line
+for(j=1;j<=size(u) div kk;j++){v=u[kk*j-(kk-1)..kk*j]; 
+   for(k=j+1;k<=size(u) div kk;k++){w=u[kk*k-(kk-1)..kk*k]; 
+     if(v[1]==w[1] and v[2]==w[2] and v[3]==w[3])
+{j,k;
+u=delete(u,kk*k-(kk-1));
+u=delete(u,kk*k-(kk-1));
+u=delete(u,kk*k-(kk-1));
+u=delete(u,kk*k-(kk-1));
+u=delete(u,kk*k-(kk-1));
+}}}
+size(u);
+for(j=1;j<=size(u) div kk;j++){v=u[kk*j-(kk-1)..kk*j]; 
+   for(k=j+1;k<=size(u) div kk;k++){w=u[kk*k-(kk-1)..kk*k]; 
+     if(v[1]==w[1] and v[2]==w[2] and v[3]==w[3])
+{j,k;
+u=delete(u,kk*k-(kk-1));
+u=delete(u,kk*k-(kk-1));
+u=delete(u,kk*k-(kk-1));
+u=delete(u,kk*k-(kk-1));
+u=delete(u,kk*k-(kk-1));
+}}}
+size(u);
+
+/*
+ideal T=1;
+ideal U;
+for (i=1;i<=60;i++){
+   U=rdideal(L[4*i-3],L[4*i-2],L[4*i-1],L[4*i]);
+   T=intersect(T,U);
+}
+T=std(T);
+mult(T);
+deg(T[1..size(T)]);
+
+ideal Q1=rdideal(2,3,5,7);
+ideal Imap=p-(w*5-z*7),q-(w*3-y*7),r-(w*1-x*7);
+//option(prot);
+
+
+ideal U=Imap,T;
+print("eliminuje sie");
+U=eliminate(U,xyzw);
+//U[1];
+
+
+ring R3=(32003,u),(p,q,r),dp;
+//minpoly=u2+1;
+//minpoly=u2-u+1;
+//minpoly=u4+1;
+minpoly=u2-u-1;
+ideal U=imap(R2,U);
+print("liczy sie std w R3");
+U=std(U);
+mult(U);
+dim(U);
+deg(U[1..size(U)]);
+*/
